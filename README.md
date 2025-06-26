@@ -10,6 +10,9 @@ This repository contains my Python assignments completed as part of the Nagarro 
 - [`Python_DSA_Assignment/Trees.py`](./Python_DSA_Assignment/Trees.py)  
   Implements dynamic binary tree creation, traversal methods (in-order, pre-order, post-order, level-order), various tree views (top, bottom, left, right, alt_level), and the maximum path sum problem.
 
+- [`Python_SQL_Assignment/SQL_Assignment.docx`](./Python_SQL_Assignment/SQL_Assignment.docx)  
+ Contains a Word document with SQL assignment queries completed during the training module.
+
 ## 🚀 How to Use
 
 1. Clone the repository:
