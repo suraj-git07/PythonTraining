@@ -1,7 +1,7 @@
 # 📂 Python_DSA_Assignment
 
 ## 🧾 Overview
-This repository is part of a larger project containing multiple assignment folders for Data Structures and Algorithms coursework. It includes `Tress.py`, a Python implementation of a **binary tree data structure**, developed as per my mentor's instructions to demonstrate proficiency in tree-based algorithms and interactive program design.
+This repository is part of a larger project containing multiple assignment folders for Data Structures and Algorithms coursework. It includes `Tress.py`, a Python implementation of a **binary tree data structure**, to demonstrate proficiency in tree-based algorithms and interactive program design.
 
 ---
 
