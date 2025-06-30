@@ -11,3 +11,40 @@ body {
     padding: 2px 6px;
     font-size: 0.8rem;
 }
+
+.bg-head-green {
+    background-color: #98E0B9;
+}
+
+.custom-back-btn {
+    background-color: #16A6AE;
+    border: none;
+}
+.custom-back-btn:hover {
+    background-color: #138b92; 
+}
+
+.custom-add-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  margin-right: 1rem;
+}
+
+.custom-add-btn:hover {
+  background-color: #2b8240;
+  color: white;
+  border: none;
+  margin-right: 1rem;
+}
+.custom-result-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.custom-result-btn:hover {
+  background-color: #0f73de;
+  color: white;
+  border: none;
+}

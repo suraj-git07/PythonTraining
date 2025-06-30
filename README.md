@@ -13,6 +13,16 @@ This repository contains my Python assignments completed as part of the Nagarro 
 - [`Python_SQL_Assignment/SQL_Assignment.docx`](./Python_SQL_Assignment/SQL_Assignment.docx)  
  Contains a Word document with SQL assignment queries completed during the training module.
 
+- [`Python_HTML_Assignment`](./Python_HTML_Assignment)  
+  Includes a student result management system built using **HTML**, **CSS**, **Bootstrap**, and **JavaScript**. Features include:
+  - Form validation using JavaScript
+  - LocalStorage-based student data management
+  - Dynamic table rendering with delete functionality
+  - Bootstrap UI components and responsive layout
+
+
+
+
 ## 🚀 How to Use
 
 1. Clone the repository:

@@ -3,7 +3,7 @@ let students = JSON.parse(localStorage.getItem('students')) || [];
 function validateForm() {
     let isValid = true;
     const form = document.getElementById('studentForm');
-    if (!form) return false; // Exit if form is not found
+    if (!form) return false;
     const rollNo = document.getElementById('rollNo').value;
     const name = document.getElementById('name').value;
     const dob = document.getElementById('dob').value;
@@ -53,6 +53,7 @@ if (form) {
                 score: document.getElementById('score').value
             };
             students.push(student);
+            students.sort((a, b) => Number(a.rollNo) - Number(b.rollNo));
             localStorage.setItem('students', JSON.stringify(students));
             alert('Student result added successfully!');
             this.reset();
