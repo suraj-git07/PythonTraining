@@ -1,4 +1,4 @@
-# Advanced Python Task Manager
+# ToDoNow : Task Management Application
 
 A web-based task management application built with Flask, supporting user authentication, task CRUD operations, and due date tracking.
 
