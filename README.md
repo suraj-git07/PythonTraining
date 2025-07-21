@@ -20,8 +20,13 @@ This repository contains my Python assignments completed as part of the Nagarro 
   - Dynamic table rendering with delete functionality
   - Bootstrap UI components and responsive layout
 
-
-
+- [`Advance_Python_Assignment`](./Advance_Python_Assignment)  
+  A Flask-based advanced Python project featuring:
+  - User authentication (login/register)
+  - Task management with CRUD operations
+  - SQLite database integration
+  - Modular structure with Blueprints
+  - HTML templates and static assets for UI
 
 ## 🚀 How to Use
 
@@ -29,3 +34,4 @@ This repository contains my Python assignments completed as part of the Nagarro 
    ```bash
    git clone https://git-training.nagarro.com/nagarro_fresher_training/python/suraj-mishra.git
    cd suraj-mishra
+   ```
