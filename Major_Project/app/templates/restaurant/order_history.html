@@ -1,0 +1,122 @@
+<!-- order history including pending,delivered and cancelled items -->
+{% extends 'restaurant/base.html' %}
+
+{% block content %}
+<div class="order-history-container">
+    {% if show_all %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-clock-history"></i> All Orders
+        </h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" id="restaurantSearch" class="form-control" 
+                       placeholder="Search by restaurant name...">
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-shop"></i> Orders for {{ restaurant.name }}
+        </h2>
+    </div>
+    {% endif %}
+    {% if all_orders %}
+    <div class="table-responsive shadow-lg">
+        <table class="table table-striped table-hover text-center mb-0" id="ordersTable">
+            <thead class="table-dark">
+                <tr>
+                    <th><i class="bi bi-hash"></i> Order ID</th>
+                    {% if show_all %}<th><i class="bi bi-shop"></i> Restaurant</th>{% endif %}
+                    <th><i class="bi bi-person"></i> Customer</th>
+                    <th><i class="bi bi-currency-rupee"></i> Total</th>
+                    <th><i class="bi bi-clock"></i> Order Time</th>
+                    <th><i class="bi bi-truck"></i> Delivered</th>
+                    <th><i class="bi bi-info-circle"></i> Status</th>
+                    <th><i class="bi bi-gear"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in all_orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    {% if show_all %}<td>{{ restaurant_map[order.restaurant_id] }}</td>{% endif %}
+                    <td>{{ order.customer_id }}</td>
+                    <td>{{ order.total_price | round(2) }}</td>
+                    <td>{{ order.order_time.strftime('%m-%d-%Y %H:%M') }}</td>
+                    <td>
+                        {% if order.delivery_time %}
+                        {{ order.delivery_time.strftime('%m-%d-%Y %H:%M') }}
+                        {% else %}
+                        <span class="text-muted">--</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.status == "d" %}
+                        <span class="badge bg-success">
+                            <i class="bi bi-check-circle"></i> Delivered
+                        </span>
+                        {% elif order.status == "p" %}
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-clock"></i> Pending
+                        </span>
+                        {% else %}
+                        <span class="badge bg-danger">
+                            <i class="bi bi-x-circle"></i> Cancelled
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{{ url_for('restaurant.order_detail', order_id=order.id) }}" 
+                               class="btn btn-outline-primary btn-sm" 
+                               title="View Order Details">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            {% if order.status == "p" %}
+                            <a href="{{ url_for('restaurant.mark_order_as_delivered', order_id=order.id) }}" 
+                               class="btn btn-success btn-sm"
+                               title="Mark as Delivered">
+                                <i class="bi bi-check-circle"></i> Fulfill
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+        </div>
+        <h4 class="text-muted">No orders yet{% if not show_all %} for this restaurant{% endif %}</h4>
+        <p class="text-muted">Orders will appear here once customers start placing them.</p>
+    </div>
+    {% endif %}
+</div>
+{% if show_all %}
+<script>
+    document.getElementById('restaurantSearch').addEventListener('keyup', function() {
+        var filter = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#ordersTable tbody tr');
+        rows.forEach(function(row) {
+            var restCell = row.querySelector('td:nth-child(2)');
+            if (restCell && restCell.textContent.toLowerCase().indexOf(filter) === -1) {
+                row.style.display = 'none';
+            } else {
+                row.style.display = '';
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'restaurant/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4 mb-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center rounded-top-4">
+                <h4 class="mb-0 fw-bold">{{ restaurant.name }}</h4>
+                <a href="{{ url_for('restaurant.edit_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-outline-light btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+            </div>
+            <div class="card-body bg-light rounded-bottom-4">
+                <div class="row align-items-center">
+                    <div class="col-md-5 text-center mb-3 mb-md-0">
+                        <img src="{{ restaurant.image_url }}" class="img-fluid rounded-3 shadow-sm border" style="max-height:250px;object-fit:cover;">
+                    </div>
+                    <div class="col-md-7">
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item bg-light"><strong>Description:</strong> {{ restaurant.description }}</li>
+                            <li class="list-group-item bg-light"><strong>Location:</strong> {{ restaurant.location }}</li>
+                            <li class="list-group-item bg-light"><strong>Opening Time:</strong> {{ restaurant.opening_time }}</li>
+                            <li class="list-group-item bg-light"><strong>Closing Time:</strong> {{ restaurant.closing_time }}</li>
+                            <li class="list-group-item bg-light"><strong>Average Rating:</strong> <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> {{ avg_rest_rating or 'N/A' }}</span></li>
+                        </ul>
+                        <div class="d-flex gap-3 mt-2">
+                            <a href="{{ url_for('restaurant.view_orders_for_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-success px-4"><i class="bi bi-receipt"></i> View Orders</a>
+                            <a href="{{ url_for('restaurant.view_menu_for_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-dark px-4"><i class="bi bi-list"></i> View Menu</a>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <h5>Recent Restaurant Reviews</h5>
+                {% if rest_reviews %}
+                    <ul class="list-group mb-3">
+                        {% for review in rest_reviews[:5] %}
+                        <li class="list-group-item">
+                            <span class="badge bg-warning text-dark me-2">{{ review.rating }} <i class="bi bi-star-fill"></i></span>
+                            {{ review.review }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-muted">No reviews yet.</div>
+                {% endif %}
+                <hr>
+                <h5>Dish Ratings & Reviews</h5>
+                {% if menu %}
+                    <ul class="list-group">
+                        {% for item in menu %}
+                        <li class="list-group-item">
+                            <strong>{{ item.name }}</strong>
+                            {% if item.avg_dish_rating %}
+                                <span class="badge bg-info ms-2"><i class="bi bi-star-fill"></i> {{ item.avg_dish_rating }}</span>
+                            {% endif %}
+                            <ul class="mb-1 mt-1">
+                                {% for review in item.dish_reviews[:2] %}
+                                <li><span class="badge bg-info me-1">{{ review.rating }} <i class="bi bi-star-fill"></i></span> {{ review.review }}</li>
+                                {% endfor %}
+                                {% if not item.dish_reviews %}
+                                <li class="text-muted">No reviews yet.</li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="text-muted">No menu items yet.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

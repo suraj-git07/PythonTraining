@@ -1,0 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask cache and debug files
+instance/
+.env
+*.env
+.env.*
+
+# SQLite database
+*.db
+*.sqlite3
+
+# Flask Migrations
+migrations/
+
+# Logs
+*.log
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Unit test / test discovery
+.pytest_cache/
+tests/__pycache__/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+.exitTestVenv/
+
+# VSCode (optional)
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Compiled binary files
+*.so
+*.dll
+*.exe
+
+# Node modules (if using frontend tools)
+node_modules/
+
+# Generated ERD files
+# *.dot
+# *.png
+
+
+*.csv
+
+create_directory.py

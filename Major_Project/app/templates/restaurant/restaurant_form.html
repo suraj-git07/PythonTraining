@@ -1,0 +1,44 @@
+{% extends 'restaurant/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">{{ 'Edit' if restaurant else 'Add' }} Restaurant</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.image_url.label(class="form-label") }}
+                        {{ form.image_url(class="form-control") }}
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col">
+                            {{ form.opening_time.label(class="form-label") }}
+                            {{ form.opening_time(class="form-control") }}
+                        </div>
+                        <div class="col">
+                            {{ form.closing_time.label(class="form-label") }}
+                            {{ form.closing_time(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.location.label(class="form-label") }}
+                        {{ form.location(class="form-control") }}
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">{{ 'Update' if restaurant else 'Add' }} Restaurant</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

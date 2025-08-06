@@ -1,0 +1,71 @@
+<!-- View / update customer profile -->
+
+{%extends 'customer/base.html'%}
+{%block content%}
+
+<script>
+    function toggleEdit() {
+        let inputs = document.querySelectorAll(".form-control");
+        let editButton = document.getElementById("edit-btn");
+        <!-- let submitButton = document.getElementById("submit-btn"); -->
+
+        inputs.forEach(input => input.toggleAttribute("readonly"));
+
+
+        if (editButton.innerText === "Edit") {
+            editButton.innerText = "Save";
+            //submitButton.style.display = "inline-block"; // Show submit button -->
+        } else {
+            document.getElementById("profile-form").submit(); // Submit form when saving
+        }
+    }
+</script>
+
+
+<div class="container mt-4">
+
+    <div class="card shadow-lg p-4">
+
+        <h2 class="mb-4 text-center">Customer Profile</h2>
+
+        <form id="profile-form" method="post" action="{{ url_for('customer.view_profile',customer_id = customer_id) }}">
+            {{form.hidden_tag()}}
+            <div class="mb-3">
+                {{form.name.label(class_='form-label')}}
+                {{form.name(class_='form-control', value=customer_profile.name, readonly=True)}}
+                <!-- <input type="text" class="form-control" id="name" name="name" value="{{ customer_profile.name }}"
+                    readonly> -->
+            </div>
+
+            <div class="mb-3">
+                {{form.email.label(class_='form-label')}}
+                {{form.email(class_='form-control', value=customer_profile.email, readonly=True)}}
+            </div>
+
+            <div class="mb-3">
+
+                {{form.phone.label(class_='form-label')}}
+                {{form.phone(class_='form-control', value=customer_profile.phone, readonly=True)}}
+                <!-- <input type="text" class="form-control" id="phone" name="phone" value="{{ customer_profile.phone }}"
+                    readonly> -->
+            </div>
+
+            <div class="mb-3">
+                {{form.address.label(class_='form-label')}}
+                {{form.address(class_='form-control', value=customer_profile.address.full_address, readonly=True)}}
+                <!-- Buttons -->
+                <div class="text-center mt-2">
+                    <button type="button" class="btn btn-warning" id="edit-btn" onclick="toggleEdit()">Edit</button>
+                    <!-- <button type="submit" class="btn btn-primary" id="submit-btn" style="display: none;">Save</button> -->
+                </div>
+            </div>
+
+        </form>
+        <div class="text-center mt-2">
+            <a href="{{ url_for('customer.reset_password') }}" class="btn btn-outline-danger">Reset Password</a>
+        </div>
+    </div>
+
+</div>
+
+{%endblock%}

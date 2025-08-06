@@ -1,0 +1,144 @@
+{% extends 'restaurant/base.html' %}
+
+{% block title %}Menu Management - {{ restaurant.name }}{% endblock %}
+
+{% block extra_head %}
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- jQuery (required by Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-2">Menu Management</h1>
+            <p class="text-muted mb-0">{{ restaurant.name }}</p>
+        </div>
+        
+        <div class="d-flex gap-3 mt-3 mt-md-0">
+            <a href="{{ url_for('restaurant.add_menu_item', restaurant_id=restaurant.id) }}" 
+               class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-plus-lg me-2"></i>
+                Add New Item
+            </a>
+        </div>
+    </div>
+
+    {% if menu %}
+    <!-- Menu Items Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="border-0 bg-light">Item Details</th>
+                        <th class="border-0 bg-light">Price</th>
+                        <th class="border-0 bg-light">Category</th>
+                        <th class="border-0 bg-light">Status</th>
+                        <th class="border-0 bg-light text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ item.name }}</h6>
+                                    <span class="text-muted small">{{ item.cuisine_id }}</span>
+                                    {% if mostly_ordered_ids and item.id in mostly_ordered_ids %}
+                                    <span class="badge bg-primary-subtle text-primary ms-2">
+                                        <i class="bi bi-graph-up me-1"></i>Popular
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="fw-medium">₹{{ item.price }}</span>
+                        </td>
+                        <td>
+                            <span class="badge border border-secondary-subtle text-secondary">
+                                {{ item.category }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                {% if item.is_special %}
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-star-fill me-1"></i>Special
+                                </span>
+                                {% endif %}
+                                {% if item.is_deal_of_day %}
+                                <span class="badge bg-warning-subtle text-warning">
+                                    <i class="bi bi-lightning-fill me-1"></i>Deal
+                                </span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{{ url_for('restaurant.edit_menu_item', restaurant_id=restaurant.id, food_id=item.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-sm btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteModal{{ item.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modals -->
+    {% for item in menu %}
+    <div class="modal fade" id="deleteModal{{ item.id }}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Delete Menu Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong>{{ item.name }}</strong>?
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{{ url_for('restaurant.delete_menu_item', restaurant_id=restaurant.id, food_id=item.id) }}" 
+                       class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <h4 class="text-center text-muted">No menu items yet for this restaurant.</h4>
+    {% endif %}
+</div>
+
+<script>
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const row = this.closest('tr');
+            row.querySelectorAll('input').forEach(input => input.removeAttribute('disabled'));
+            row.querySelectorAll('select').forEach(select => select.removeAttribute('disabled'))
+            row.querySelector('.save-btn').style.display = 'inline-block';
+            this.style.display = 'none';
+            row.querySelector('.deleteDish').classList.remove('d-none');
+        });
+    });
+</script>
+{% endblock %}

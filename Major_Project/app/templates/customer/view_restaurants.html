@@ -1,0 +1,224 @@
+{% extends 'customer/base.html' %}
+
+{% block title %}Discover Restaurants{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="{{ url_for('static', filename='customer/view-restaurants.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="restaurants-container">
+    <!-- Header Section -->
+    <header class="mb-4">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold mb-3">Find Your Perfect Meal</h1>
+                <p class="lead text-muted mb-0">Discover the best restaurants in your area</p>
+            </div>
+            
+            <!-- Search and Filter Controls -->
+            <div class="col-lg-6">
+                <div class="d-flex gap-3 justify-content-lg-end mt-4 mt-lg-0">
+                    <form method="GET" action="{{url_for('customer.view_restaurants')}}" class="d-flex flex-grow-1 flex-lg-grow-0">
+                        {{ search_form.hidden_tag() }}
+                        <div class="sleek-search-wrapper position-relative">
+                            <input type="search" 
+                                   id="restSearch" 
+                                   name="name_filter" 
+                                   class="sleek-search-input" 
+                                   placeholder="Search restaurants..." 
+                                   {% if request.args.get("name_filter") %}
+                                   value="{{ request.args.get('name_filter') }}"
+                                   {% endif %}>
+                            <button type="submit" class="sleek-search-btn">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <button class="sleek-filter-btn" 
+                            type="button" 
+                            data-bs-toggle="offcanvas" 
+                            data-bs-target="#filterOffcanvas">
+                        <i class="bi bi-sliders me-2"></i>
+                        <span>Filters</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- No Results Message -->
+    {% if restaurants|length == 0 %}
+    <div class="text-center py-5">
+        <div class="display-6 text-muted mb-3">
+            <i class="bi bi-search"></i>
+        </div>
+        <h3 class="h4 mb-3">No Restaurants Found</h3>
+        <p class="text-muted mb-4">Try adjusting your filters or search criteria</p>
+        <a href="{{ url_for('customer.view_restaurants') }}" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-clockwise me-2"></i>Reset Filters
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Restaurant Grid -->
+    <div class="restaurant-grid">
+        {% for restaurant in restaurants %}
+        <div class="restaurant-card">
+            <a href="{{ url_for('customer.view_restaurant', restaurant_id=restaurant.id) }}" class="text-decoration-none">
+                <div class="position-relative">
+                    <img src="{{ restaurant.image_url }}" 
+                         class="card-img-top" 
+                         alt="{{ restaurant.name }}"
+                         style="height: 200px; width: 100%; object-fit: cover;">
+                    
+                    <!-- Quick Info Badges -->
+                    <div class="position-absolute top-0 start-0 p-3 d-flex flex-column gap-2">
+                        <span class="badge bg-white bg-opacity-90 text-dark">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            {{ restaurant.location }}
+                        </span>
+                        
+                        <span class="badge bg-warning text-dark">
+                            <i class="bi bi-star-fill me-1"></i>
+                            {{ "%.1f"|format(restaurant.rating|float) }}
+                        </span>
+                    </div>
+                    
+                    <!-- Favorite Button -->
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <button class="btn btn-sm btn-light bg-white bg-opacity-90 favorite-btn" 
+                                data-restaurant-id="{{ restaurant.id }}"
+                                onclick="event.preventDefault(); event.stopPropagation(); toggleFavorite({{ restaurant.id }}, this);">
+                            <i class="bi {% if restaurant.is_favorite %}bi-heart-fill text-danger{% else %}bi-heart{% endif %}"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-3">
+                    <h3 class="h5 mb-2 text-dark">{{ restaurant.name }}</h3>
+                    
+                    <!-- Status Badge -->
+                    {% if restaurant['open_status'][0] %}
+                    <span class="badge bg-success-subtle text-success">
+                        <i class="bi bi-clock me-1"></i>Open Now
+                    </span>
+                    {% else %}
+                    <span class="badge bg-danger-subtle text-danger">
+                        <i class="bi bi-clock me-1"></i>Closed
+                    </span>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Offcanvas Filter Sidebar -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="filterOffcanvasLabel">
+            <i class="bi bi-funnel-fill me-2"></i>Filter Restaurants
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% include 'customer/filter-sidebar.html' %}
+    </div>
+</div>
+
+<script>
+function toggleFavorite(restaurantId, button) {
+    const icon = button.querySelector('i');
+    const originalClass = icon.className;
+    
+    // Show loading state
+    icon.className = 'bi bi-arrow-clockwise';
+    button.disabled = true;
+    
+    fetch(`/customer/toggle_favorite_restaurant/${restaurantId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update icon based on favorite status
+            if (data.is_favorite) {
+                icon.className = 'bi bi-heart-fill text-danger';
+            } else {
+                icon.className = 'bi bi-heart';
+            }
+            
+            // Show toast notification using Bootstrap toast
+            showToast(data.message, 'success');
+        } else {
+            // Revert icon on error
+            icon.className = originalClass;
+            showToast(data.message || 'An error occurred', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Revert icon on error
+        icon.className = originalClass;
+        showToast('An error occurred while updating favorites', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toastId = 'toast-' + Date.now();
+    const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+    
+    const toastHtml = `
+        <div id="${toastId}" class="toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header ${bgClass} text-white border-0">
+                <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <strong class="me-auto">${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Info'}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    
+    // Show toast
+    const toastElement = document.getElementById(toastId);
+    if (toastElement && window.bootstrap) {
+        const toast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 4000
+        });
+        toast.show();
+        
+        // Remove toast element after it's hidden
+        toastElement.addEventListener('hidden.bs.toast', () => {
+            toastElement.remove();
+        });
+    }
+}
+</script>
+{% endblock %}

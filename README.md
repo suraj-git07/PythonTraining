@@ -28,6 +28,17 @@ This repository contains my Python assignments completed as part of the Nagarro 
   - Modular structure with Blueprints
   - HTML templates and static assets for UI
 
+- [`Major_Project`](./Major_Project)  
+  **JustEat** - A comprehensive food delivery web application built with Flask. This full-stack project demonstrates advanced Python web development concepts:
+  - **Dual User System**: Customer and restaurant owner authentication with role-based access
+  - **Restaurant Management**: Restaurant registration, menu management, and order processing
+  - **Customer Features**: Restaurant discovery, advanced filtering, cart management, and order tracking
+  - **Smart Recommendations**: Auto-detection of favorite restaurants and dishes based on order patterns
+  - **Rating & Review System**: Customer feedback system for restaurants and dishes
+  - **Advanced Database**: SQLAlchemy with migrations, complex relationships, and data seeding
+  - **Modern Tech Stack**: Flask-Login, Flask-WTF, bcrypt encryption, and responsive UI
+  - **Production Features**: Database migrations, logging, comprehensive testing suite
+
 ## 🚀 How to Use
 
 1. Clone the repository:

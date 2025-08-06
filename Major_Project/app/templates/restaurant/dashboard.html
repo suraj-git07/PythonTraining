@@ -1,0 +1,37 @@
+{% extends 'restaurant/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">My Restaurants</h2>
+    <a href="{{ url_for('restaurant.add_restaurant') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add Restaurant
+    </a>
+</div>
+<div class="row g-4">
+    {% for restaurant in restaurants %}
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <img src="{{ restaurant.image_url }}" class="card-img-top" style="height:200px;object-fit:cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ restaurant.name }}</h5>
+                <p class="card-text text-muted small">{{ restaurant.description }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-info"><i class="bi bi-geo-alt"></i> {{ restaurant.location }}</span>
+                    <span class="badge bg-warning text-dark"><i class="bi bi-star-fill"></i> {{ restaurant.rating or 'N/A' }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('restaurant.restaurant_detail', restaurant_id=restaurant.id) }}" class="btn btn-outline-primary btn-sm">View</a>
+                    <a href="{{ url_for('restaurant.edit_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    <a href="{{ url_for('restaurant.view_orders_for_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-outline-success btn-sm">Orders</a>
+                    <a href="{{ url_for('restaurant.view_menu_for_restaurant', restaurant_id=restaurant.id) }}" class="btn btn-outline-dark btn-sm">Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if restaurants|length == 0 %}
+    <div class="col-12">
+        <div class="alert alert-info text-center">No restaurants found. Click "Add Restaurant" to get started!</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

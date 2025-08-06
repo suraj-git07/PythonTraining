@@ -1,0 +1,140 @@
+{% extends 'customer/base.html' %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="cart-container">
+        <!-- Header Section -->
+        <div class="order-history-container">
+            <h1 class="order-history-title">Your Cart</h1>
+            {% if cart_by_restaurants %}
+            <p class="text-center text-muted mb-4">Review your items and proceed to checkout</p>
+            {% endif %}
+        </div>
+
+    {% if cart_by_restaurants %}
+    {% set ns = namespace(master_total = 0) %}
+
+    <!-- Restaurant Orders -->
+    {% for restaurant, items in cart_by_restaurants.items() %}
+    {% set ns1 = namespace(restaurant_total = 0) %}
+    
+    <!-- Restaurant Order Section -->
+    <div class="order-section">
+        <!-- Restaurant Header -->
+        <div class="order-subsection-heading">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <div>
+                    <h5 class="mb-1">{{ items[0]['restaurant'].name }}</h5>
+                    <p class="text-muted mb-0 small">
+                        <i class="bi bi-geo-alt me-1"></i>{{ items[0]['restaurant'].location }}
+                    </p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary">
+                    <i class="bi bi-clock me-1"></i>35-45 min
+                </span>
+            </div>
+        </div>
+
+        <!-- Order Items Table -->
+        <div class="table-responsive">
+            <table class="table order-items-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-end">Total</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dict_item in items %}
+                    {% set total = dict_item['food'].price * dict_item['cart'].quantity %}
+                    {% set ns1.restaurant_total = ns1.restaurant_total + total %}
+                    
+                    <tr class="order-row">
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-light rounded p-2">
+                                    <i class="bi bi-bowl-hot text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="food-item-name mb-1">{{ dict_item['food'].name }}</h6>
+                                    <p class="text-muted mb-0 small">{{ dict_item['food'].description or 'Delicious food item' }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center align-middle">
+                            <span class="fw-medium">₹{{ dict_item['food'].price }}</span>
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="cart-quantity-controls mx-auto">
+                                <a href="{{ url_for('customer.cart_update', food_id=dict_item['food'].id, action='subtract') }}" 
+                                   class="btn btn-sm">
+                                    <i class="bi bi-dash"></i>
+                                </a>
+                                <span class="btn btn-sm disabled">{{ dict_item['cart'].quantity }}</span>
+                                <a href="{{ url_for('customer.cart_update', food_id=dict_item['food'].id, action='add') }}" 
+                                   class="btn btn-sm">
+                                    <i class="bi bi-plus"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td class="text-end align-middle">
+                            <span class="fw-bold text-primary">₹{{ total }}</span>
+                        </td>
+                        <td class="text-center align-middle">
+                            <a href="{{ url_for('customer.cart_update', food_id=dict_item['food'].id, action='remove') }}" 
+                               class="btn btn-sm btn-outline-danger cart-remove-btn">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end fw-bold">Restaurant Subtotal:</td>
+                        <td class="text-end fw-bold">₹{{ ns1.restaurant_total }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {% set ns.master_total = ns.master_total + ns1.restaurant_total %}
+    {% endfor %}
+
+    <!-- Total Section -->
+    <div class="order-section text-center">
+        <h3 class="order-section-heading justify-content-center">
+            Order Summary
+        </h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="h5 mb-0">Total Amount:</span>
+                    <span class="h4 mb-0 text-primary fw-bold">₹{{ ns.master_total }}</span>
+                </div>
+                <a href="{{ url_for('customer.order') }}" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-bag-check-fill me-2"></i> Proceed to Checkout
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <div class="empty-orders-state">
+            <div class="no-orders-message">
+                <h5>Your cart is empty</h5>
+                <p>Add some delicious items to get started!</p>
+                <a href="{{ url_for('customer.view_restaurants') }}" class="btn btn-primary mt-3">
+                    <i class="bi bi-shop me-2"></i>Browse Restaurants
+                </a>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}

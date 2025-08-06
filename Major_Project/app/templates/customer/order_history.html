@@ -1,0 +1,91 @@
+{% extends 'customer/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="order-history-container">
+        <h1 class="order-history-title">Order History</h1>
+        
+        <div class="order-search-container">
+            <div class="search-form-wrapper">
+                <form method="get" class="d-flex align-items-center gap-3">
+                    <div class="search-input-group flex-grow-1">
+                        <input type="search" name="order_restaurant" class="form-control search-input"
+                            placeholder="Search orders by restaurant name..."
+                            value="{{ request.args.get('order_restaurant', '') }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary search-btn">
+                        Search
+                    </button>
+                    {% if request.args.get('order_restaurant') %}
+                    <a href="{{ url_for('customer.view_order_history') }}" class="btn btn-outline-secondary">
+                        Clear
+                    </a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table order-items-table">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Restaurant</th>
+                    <th class="text-center">Total (₹)</th>
+                    <th class="text-center">Order Time</th>
+                    <th class="text-center">Delivered Time</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if all_orders|length == 0 %}
+                <tr>
+                    <td colspan="5" class="empty-orders-state">
+                        <div class="no-orders-message">
+                            <h5>No orders found</h5>
+                            <p class="text-muted">Start ordering from your favorite restaurants!</p>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                {% for order in all_orders %}
+                {% set rest_name = Restaurant.query.get(order.restaurant_id).name %}
+                <tr onclick="window.location='{{ url_for('customer.order_detail', order_id=order.id) }}'" class="order-row" style="cursor:pointer;">
+                    <td class="text-center">{{ rest_name }}</td>
+                    <td class="text-center">{{ order.total_price | round(2) }}</td>
+                    <td class="text-center">{{ order.order_time.strftime('%m-%d-%Y %H:%M') }}</td>
+                    <td class="text-center">
+                        {% if order.delivery_time %}
+                        {{ order.delivery_time.strftime('%m-%d-%Y %H:%M') }}
+                        {% else %}
+                        <span class="text-muted">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if order.status == "d" %}
+                        <span class="badge bg-success order-status-badge">
+                            Delivered
+                        </span>
+                        {% elif order.status == "p" %}
+                        <span class="badge bg-warning text-dark order-status-badge">
+                            Pending
+                        </span>
+                        <div class="mt-1">
+                            <a class="btn btn-danger btn-sm" href="{{url_for('customer.cancel_order', order_id = order.id)}}" 
+                               onclick="event.stopPropagation();">
+                                Cancel Order
+                            </a>
+                        </div>
+                        {% else %}
+                        <span class="badge bg-danger order-status-badge">
+                            Cancelled
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+        </table>
+    </div>
+</div>
+</div>
+{% endblock %}

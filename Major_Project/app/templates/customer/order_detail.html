@@ -1,0 +1,102 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+
+<div class="order-detail-container">
+    <h1 class="order-page-title">Order Summary</h1>
+
+    <div class="order-summary-card">
+        <h2 class="order-section-heading">Order Items</h2>
+        <div class="table-responsive">
+            <table class="table order-items-table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">#</th>
+                        <th scope="col">Food Item</th>
+                        <th scope="col" class="text-center">Quantity</th>
+                        <th scope="col" class="text-end">Price (Per Unit)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td class="text-center fw-bold">{{ loop.index }}</td>
+                        <td class="food-item-name">{{ item.food_name }}</td>
+                        <td class="text-center">{{ item.quantity }}</td>
+                        <td class="text-end">₹{{ item.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Total Amount</td>
+                        <td class="text-end fw-bold">₹{{ total_price }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+{% if order.status == 'd' %}
+<div class="review-section">
+    <h4>Rate & Review Your Experience</h4>
+    <form method="POST">
+        {{ rest_review_form.hidden_tag() }}
+        
+        <div class="order-section">
+            <h5 class="order-subsection-heading">Restaurant Review</h5>
+            <div class="row align-items-center mb-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Rating (1-5 stars)</label>
+                    {{ rest_review_form.rating(class="form-control") }}
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label fw-bold">Your Review</label>
+                    {{ rest_review_form.review(class="form-control", placeholder="Share your experience with this restaurant...") }}
+                </div>
+            </div>
+            {% if existing_rest_review %}
+                <div class="alert alert-success">
+                    <strong>Your Review:</strong> {{ existing_rest_review.rating }}/5 - "{{ existing_rest_review.review }}"
+                </div>
+            {% endif %}
+            <button type="submit" class="btn btn-success" {% if existing_rest_review %}disabled{% endif %}>
+                Submit Restaurant Review
+            </button>
+        </div>
+
+        <div class="order-section">
+            <h5 class="order-subsection-heading">Individual Dish Reviews</h5>
+            {% for food, form, existing_review in dish_review_forms %}
+            <div class="dish-review-card">
+                <strong>{{ food.name }}</strong>
+                {% if existing_review %}
+                    <div class="alert alert-success mt-2">
+                        <strong>Your Review:</strong> {{ existing_review.rating }}/5 - "{{ existing_review.review }}"
+                    </div>
+                {% else %}
+                    {{ form.hidden_tag() }}
+                    <div class="row g-2 align-items-center mt-2">
+                        <div class="col-md-2">
+                            <label class="form-label small">Rating</label>
+                            {{ form.rating(class="form-control", min=1, max=5) }}
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small">Review</label>
+                            {{ form.review(class="form-control", placeholder="How was this dish?") }}
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" name="submit_{{ food.id }}" class="btn btn-outline-success btn-sm">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+{% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'customer/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <ul class="nav nav-pills mb-4 justify-content-center" id="mostlyTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active px-4 py-2" id="my-favourite-tab" data-bs-toggle="tab" data-bs-target="#my-favourite" type="button" role="tab" aria-controls="my-favourite" aria-selected="true">My Favourite</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link px-4 py-2" id="favourite-restaurants-tab" data-bs-toggle="tab" data-bs-target="#favourite-restaurants" type="button" role="tab" aria-controls="favourite-restaurants" aria-selected="false">Favourite Restaurants</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="mostlyTabsContent">
+        <div class="tab-pane fade show active" id="my-favourite" role="tabpanel" aria-labelledby="my-favourite-tab">
+            <h3 class="mb-4 text-center">My Favourite Items</h3>
+            {% if mostly_ordered_items %}
+            <div class="row g-4 justify-content-center">
+                {% for item in mostly_ordered_items %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card shadow h-100 border-0">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                            <h5 class="card-title mb-2">
+                                {{ item.name }} <span class="badge bg-primary">My Favourite</span>
+                                {% if mostly_ordered_item_ids_today and item.id in mostly_ordered_item_ids_today %}
+                                    <span class="badge bg-danger ms-1">Mostly Ordered</span>
+                                {% endif %}
+                            </h5>
+                            <p class="card-text mb-1">From: <span class="fw-semibold">{{ item.restaurant_name }}</span></p>
+                            <p class="card-text mb-1">Ordered <span class="fw-bold">{{ item.count }}</span> times</p>
+                            <p class="card-text mb-0">Price: <span class="fw-bold">₹{{ item.price }}</span></p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">No items have been ordered more than 3 times yet.</div>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="favourite-restaurants" role="tabpanel" aria-labelledby="favourite-restaurants-tab">
+            <h3 class="mb-4 text-center">Your Favourite Restaurants</h3>
+            {% if favourite_restaurants %}
+            <div class="row g-4 justify-content-center">
+                {% for rest in favourite_restaurants %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card shadow h-100 border-0">
+                        <img src="{{ rest.image_url }}" class="card-img-top" style="height:180px;object-fit:cover;">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                            <h5 class="card-title mb-2">{{ rest.name }}</h5>
+                            <p class="card-text mb-2">{{ rest.description }}</p>
+                            <a href="{{ url_for('customer.view_restaurant', restaurant_id=rest.id) }}" class="btn btn-outline-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">You have not marked any restaurants as favourite yet.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

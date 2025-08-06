@@ -1,0 +1,76 @@
+<form class="filter-form" onsubmit="return false;">
+    <!-- Cuisines Filter -->
+    <div class="filter-section mb-4">
+        <label for="cuisineFilter" class="form-label fw-medium mb-2">
+            <i class="bi bi-egg-fried me-2"></i>Cuisines
+        </label>
+        <select id="cuisineFilter" class="form-select" multiple data-choices>
+            <option value="Indian">Indian</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Italian">Italian</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Thai">Thai</option>
+            <option value="Japanese">Japanese</option>
+            <option value="American">American</option>
+            <option value="Fast Food">Fast Food</option>
+            <option value="Continental">Continental</option>
+            <option value="South Indian">South Indian</option>
+        </select>
+        <small class="text-muted">Select multiple cuisines</small>
+    </div>
+
+    <!-- Locations Filter -->
+    <div class="filter-section mb-4">
+        <label for="locationFilter" class="form-label fw-medium mb-2">
+            <i class="bi bi-geo-alt me-2"></i>Locations
+        </label>
+        <select id="locationFilter" class="form-select" multiple data-choices>
+            {% for location in locations %}
+            <option value="{{ location }}">{{ location }}</option>
+            {% endfor %}
+        </select>
+        <small class="text-muted">Select multiple locations</small>
+    </div>
+
+    <!-- Rating Filter -->
+    <div class="filter-section mb-4">
+        <label for="ratingFilter" class="form-label fw-medium mb-2">
+            <i class="bi bi-star me-2"></i>Minimum Rating
+        </label>
+        <select id="ratingFilter" class="form-select" data-choices>
+            <option value="">Any Rating</option>
+            {% for rating in range(4, 0, -1) %}
+            <option value="{{ rating }}">{{ rating }}+ Stars</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Price Filter -->
+    <div class="filter-section mb-4">
+        <label for="minPriceFilter" class="form-label fw-medium mb-2">
+            <i class="bi bi-currency-rupee me-2"></i>Minimum Price
+        </label>
+        <div class="input-group">
+            <span class="input-group-text">₹</span>
+            <input type="number" 
+                   id="minPriceFilter" 
+                   class="form-control" 
+                   min="0" 
+                   placeholder="e.g. 100"
+                   aria-label="Minimum price in rupees">
+        </div>
+        <small class="text-muted">Enter minimum price per person</small>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-grid gap-2">
+        <button type="button" class="btn btn-primary" id="applyFilters">
+            <i class="bi bi-funnel-fill me-2"></i>Apply Filters
+        </button>
+        <button type="reset" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>Reset Filters
+        </button>
+    </div>
+</form>
+
+
