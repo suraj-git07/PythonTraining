@@ -1,7 +1,5 @@
 # Python Assignments – Suraj Mishra
 
-This repository contains my Python assignments completed as part of the Nagarro Fresher Training program. I will keep updating this repository as I add more assignments and modules.
-
 ## 📁 Current Contents
 
 - [`Python_Basics_Assignment`](./Python_Basics_Assignment)  
